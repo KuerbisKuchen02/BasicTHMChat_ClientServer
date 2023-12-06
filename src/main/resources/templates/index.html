@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://kit.fontawesome.com/fcece7521e.js" crossorigin="anonymous"></script>
+    <title>Java Chat</title>
+</head>
+<body>
+<div class="app__container">
+
+    <div class="header">
+        <p class="header__title">Basic THM Chat Server</p>
+    </div>
+
+    <div class="sidebar">
+        <div class="contacts__container" id="contacts">
+
+            <a class="contacts__item"
+                 th:each="chat : ${chats}"
+                 th:classappend="${chat.id == new_message.chat.id} ? 'contacts__item-selected'"
+                 th:href="@{/(chat=${chat.id})}">
+                <div class="contacts__icon__container">
+                    <i class="contacts__icon fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <p class="contacts__item__title" th:text="${chat.name}">Mustermann</p>
+                    <p class="contacts__item__text"
+                       th:text="${chat.receivers}">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...
+                    </p>
+                </div>
+            </a>
+
+        </div>
+        <div class="options__container">
+            <button class="options__logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+            <p>Benuzer: jdmn23</p>
+        </div>
+    </div>
+
+    <div class="main_content">
+
+        <div class="messages__container" id="messages">
+            <div class="message__item"
+                 th:each="message : ${messages}"
+                 th:classappend="${message.direction.equals('in')} ? 'message-in' : 'message-out'">
+                <img th:if="${message.type.equals('img')}" th:src="${message.content}" height="300">
+                <p th:if="${message.type.equals('txt')}"
+                   th:text="${message.content}"
+                   class="message__item__text" >Lorem ipsum dolor sit</p>
+                <a th:if="${message.type.equals('img')}"
+                   th:text="${message.content}"
+                   th:href="${message.content}"
+                   class="message__item__text" >Lorem ipsum dolor sit</a>
+                <p class="message__item__meta" th:text="${message.getStringDate()}">2023-11-27 10:59:49</p>
+            </div>
+        </div>
+
+        <form
+                th:action="@{/}" th:object="${new_message}"
+                class="user_input__container"
+                id="send_message"
+                method="post">
+            <input
+                    type="hidden"
+                    th:field="*{chat.id}">
+            <button
+                    onclick=""
+                    class="user_input__img_button">
+                <i class="fa-regular fa-image"></i>
+            </button>
+            <textarea
+                    th:field="*{content}"
+                    class="user_input__textarea"
+                    id="message_text"
+                    placeholder="Enter message..."
+                    rows="1">
+            </textarea>
+            <button
+                    id="new_message_submit_button"
+                    class="user_input__submit_button"
+                    type="submit">
+                <i class="fa-regular fa-paper-plane"></i>
+            </button>
+        </form>
+
+    </div>
+
+</div>
+<script>
+    const messages = document.getElementById( 'messages' ).children;
+    messages.item(messages.length - 1).scrollIntoView();
+
+
+    const textInput = document.getElementById('message_text');
+    textInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            document.getElementById("new_message_submit_button").click();
+        }
+    });
+</script>
+</body>
+</html>
